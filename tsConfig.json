@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": ["src/app.ts"]
+  "files": ["Juillet/src/app.ts"]
 }

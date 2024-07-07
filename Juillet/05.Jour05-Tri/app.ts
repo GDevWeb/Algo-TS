@@ -39,6 +39,7 @@ function bubbleSort(argArray: number[]): number[] | undefined | null {
         }
       }
     } while (swapped);
+    console.log("Statement of swapped in the while :", swapped);
 
     return argArray;
   } catch (error) {

@@ -1,87 +1,87 @@
 "use strict";
-/*
-### Jour 2 : Algorithmes de tri avancés
+/* ### Jour 3 : Algorithmes de recherche avancés
 
 **Exercice 1 :**
-Implémenter un tri par sélection pour un tableau de nombres.
- */
-function selectionSort(argNumberArray) {
-    // errors :
+Écrire une fonction qui utilise la recherche binaire pour trouver un élément dans un tableau trié.
+*/
+function binarySearch(argArray, argTarget) {
+    // Vérification des erreurs :
     try {
-        if (argNumberArray === undefined ||
-            argNumberArray === null ||
-            argNumberArray.length === 0) {
-            throw new Error(`Veuillez saisir un tableau d'éléments non vides !`);
+        if (argArray === null || argArray === undefined || argArray.length === 0) {
+            throw new Error(`Veuillez saisir un tableau non vide !`);
         }
-        if (!Array.isArray(argNumberArray)) {
-            throw new Error(`Veuillez saisir un tableau !`);
+        if (argArray.some((element) => element === null || element === undefined)) {
+            throw new Error(`Veuillez saisir un tableau d'éléments valides !`);
         }
-        if (argNumberArray.some((element) => isNaN(element))) {
-            throw new Error(`Veuillez saisir un tableau composé iniquement de nombres!`);
-        }
-        // main logic :
-        let n = argNumberArray.length;
-        for (let i = 0; i < n; i++) {
-            let min = i;
-            for (let j = i + 1; j < n; j++) {
-                if (argNumberArray[j] < argNumberArray[min]) {
-                    min = j;
-                }
+        // La recherche binaire nécessite un tableau trié.
+        let left = 0;
+        let right = argArray.length - 1;
+        // Logique de la recherche binaire :
+        while (left <= right) {
+            const middle = Math.floor((left + right) / 2);
+            const middleElement = argArray[middle];
+            if (middleElement === argTarget) {
+                return `"${argTarget} est présent dans le tableau à l'index : ${middle}"`;
             }
-            if (min != i) {
-                // swap element :
-                let tmp = argNumberArray[i];
-                argNumberArray[i] = argNumberArray[min];
-                argNumberArray[min] = tmp;
+            else if (middleElement < argTarget) {
+                left = middle + 1;
             }
-            return argNumberArray;
+            else {
+                right = middle - 1;
+            }
         }
+        return `"${argTarget} n'est pas présent dans le tableau"`;
     }
     catch (error) {
-        console.error(`Une erreur s'est produite, ${error}`);
+        console.error(error);
     }
 }
-// tests :
-const inputUndefinedArr = undefined;
-console.log("Test undefined array :");
-console.log(selectionSort(inputUndefinedArr));
-console.log("Test inputArrNumber :");
-const inputArrNumber = [5, 2, 4, 6, 1, 3];
-console.log(selectionSort(inputArrNumber));
-/* **Exercice 2 :**
-Implémenter un tri rapide (quicksort) pour un tableau de nombres.
+// Tests :
+console.log("Test de la fonction binarySearch");
+const testArgArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+console.log(binarySearch(testArgArray, 10)); // "10 est présent dans le tableau à l'index : 9"
+console.log(binarySearch(testArgArray, 42)); // "42 n'est pas présent dans le tableau"
+/*
+**Exercice 2 :**
+Écrire une fonction qui trouve le premier et le dernier indice d'un élément donné dans un tableau trié (utiliser une recherche binaire modifiée).
  */
-// Function to partition the array and return the partition index
-function partition(arr, low, high) {
-    // Choosing the pivot
-    let pivot = arr[high];
-    // Index of smaller element and indicates the right position of pivot found so far
-    let i = low - 1;
-    for (let j = low; j <= high - 1; j++) {
-        // If current element is smaller than the pivot
-        if (arr[j] < pivot) {
-            // Increment index of smaller element
-            i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]]; // Swap elements
+function findFirstAndLastIndex(arr, target) {
+    // Recherche du premier indice de l'élément cible
+    const firstIndex = findIndex(arr, target, true);
+    if (firstIndex === -1) {
+        return [-1, -1]; // Si l'élément n'est pas trouvé, retourner [-1, -1]
+    }
+    // Recherche du dernier indice de l'élément cible
+    const lastIndex = findIndex(arr, target, false);
+    return [firstIndex, lastIndex];
+}
+function findIndex(arr, target, findFirst) {
+    let left = 0;
+    let right = arr.length - 1;
+    let result = -1;
+    while (left <= right) {
+        const middle = Math.floor((left + right) / 2);
+        if (arr[middle] === target) {
+            result = middle;
+            if (findFirst) {
+                right = middle - 1; // Continue à chercher dans la moitié gauche
+            }
+            else {
+                left = middle + 1; // Continue à chercher dans la moitié droite
+            }
+        }
+        else if (arr[middle] < target) {
+            left = middle + 1;
+        }
+        else {
+            right = middle - 1;
         }
     }
-    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]]; // Swap pivot to its correct position
-    return i + 1; // Return the partition index
+    return result;
 }
-// The main function that implements QuickSort
-function quickSort(arr, low, high) {
-    if (low < high) {
-        // pi is the partitioning index, arr[pi] is now at the right place
-        let pi = partition(arr, low, high);
-        // Separately sort elements before partition and after partition
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
-    }
-}
-// Driver code
-let arr = [10, 7, 8, 9, 1, 5];
-let N = arr.length;
-// Function call
-quickSort(arr, 0, N - 1);
-console.log("Sorted array:");
-console.log(arr.join(" "));
+// Tests
+const testArray = [1, 2, 2, 2, 3, 4, 5, 5, 5, 6, 7, 8, 9, 10];
+console.log("Test de la fonction findFirstAndLastIndex");
+console.log(findFirstAndLastIndex(testArray, 2)); // [1, 3]
+console.log(findFirstAndLastIndex(testArray, 5)); // [6, 8]
+console.log(findFirstAndLastIndex(testArray, 11)); // [-1, -1]
